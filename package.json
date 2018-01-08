@@ -2,7 +2,8 @@
   "name": "turbine-jobscheduler",
   "version": "1.0.1",
   "description": "Job scheduler module for turbine framework",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "prepublish": "npm run build",
     "build": "./node_modules/.bin/gulp",
