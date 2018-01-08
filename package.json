@@ -1,7 +1,7 @@
 {
   "name": "turbine-jobscheduler",
   "version": "1.0.1",
-  "description": "Nodejs framework for creating clustered applications",
+  "description": "Job scheduler module for turbine framework",
   "main": "index.js",
   "scripts": {
     "prepublish": "npm run build",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ctoesca"
+    "url": "git+https://github.com/ctoesca/turbine-jobscheduler"
   },
   "keywords": [
     "turbine"
@@ -22,9 +22,9 @@
   "author": "Christophe Toesca <christophe.toesca@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ctoesca/turbine/issues"
+    "url": "https://github.com/ctoesca/turbine-jobscheduler/issues"
   },
-  "homepage": "https://github.com/ctoesca/turbine#readme",
+  "homepage": "https://github.com/ctoesca/turbine-jobscheduler#readme",
   "devDependencies": {
     "@types/bluebird": "^3.5.19",
     "@types/bunyan": "^1.8.4",
