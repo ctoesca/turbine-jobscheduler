@@ -12,7 +12,8 @@ export declare class TjobScheduler extends turbine.services.TbaseService {
         "refreshInterval": number;
         "url": {
             "start_job": string;
-            "get_schedules": string;
+            "get_cron_schedules": string;
+            "check": string;
         };
         "api_username": string;
         "api_password": string;
@@ -21,12 +22,12 @@ export declare class TjobScheduler extends turbine.services.TbaseService {
         "workDir": string;
     };
     flatify(): Promise<{}>;
-    getSchedules(): Promise<{}>;
+    request(method: any, url: any): Promise<{}>;
     getTaskName(schedule: any): any;
     scheduleAllJobs(): Promise<{}>;
     start(): void;
     stop(): void;
-    execBatch(scheduleItem: any): void;
+    execBatch(scheduleItem: any): Promise<{}>;
     onRefreshTimer(): void;
     scheduleJob(scheduleItem: any): any;
     cancelAllJobs(): void;

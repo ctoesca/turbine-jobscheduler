@@ -18,7 +18,8 @@ class TjobScheduler extends turbine.services.TbaseService {
             "refreshInterval": 60,
             "url": {
                 "start_job": "http://localhost:82/apis/robotop/1.0/schedules/{scheduleId}/start",
-                "get_schedules": "http://localhost:82/apis/robotop/1.0/schedules?where=active=1 AND type='cron'"
+                "get_cron_schedules": "http://localhost:82/apis/robotop/1.0/schedules?where=active=1 AND type='cron'",
+                "check": "http://localhost:82/apis/robotop/1.0/schedules/check"
             },
             "api_username": "turbine-server",
             "api_password": "s3#cr3t",
@@ -35,10 +36,11 @@ class TjobScheduler extends turbine.services.TbaseService {
             resolve(r);
         }.bind(this));
     }
-    getSchedules() {
+    request(method, url) {
         return new Promise(function (resolve, reject) {
-            var url = this.config.url.get_schedules;
             var opt = {
+                url: url,
+                method: method,
                 strictSSL: false,
                 json: true,
                 headers: {
@@ -46,7 +48,7 @@ class TjobScheduler extends turbine.services.TbaseService {
                 }
             };
             if (this.config.api_key) {
-                url += "&ticket=" + this.config.api_key;
+                opt.url += "&ticket=" + this.config.api_key;
             }
             else if (this.config.api_username && this.config.api_password) {
                 opt.auth =
@@ -56,16 +58,16 @@ class TjobScheduler extends turbine.services.TbaseService {
                         sendImmediately: true
                     };
             }
-            request.get(url, opt, function (error, response, body) {
+            request(opt, function (error, response, body) {
                 if (error) {
-                    reject("Http GET error=" + error + ", url=" + url);
+                    reject("Http " + method + " error=" + error + ", url=" + url);
                 }
                 else {
                     if (response && (response.statusCode < 400)) {
-                        resolve(body.data);
+                        resolve(body);
                     }
                     else {
-                        reject("Http POST status=" + response.statusCode + ", body=" + body + ", url=" + url);
+                        reject("Http " + method + " status=" + response.statusCode + ", body=" + body + ", url=" + url);
                     }
                 }
             }.bind(this));
@@ -75,12 +77,16 @@ class TjobScheduler extends turbine.services.TbaseService {
         return this.config.taskNameFunction(schedule);
     }
     scheduleAllJobs() {
-        return this.getSchedules()
-            .then(function (schedules) {
-            if (typeof schedules == "undefined") {
+        return this.request("POST", this.config.url.check)
+            .then(function (result) {
+            return this.request("GET", this.config.url.get_cron_schedules);
+        }.bind(this))
+            .then(function (body) {
+            if (typeof body.data == "undefined") {
                 this.logger.error("schedules is undefined");
                 return;
             }
+            var schedules = body.data;
             for (var k in this.schedules)
                 this.schedules[k].valid = 0;
             for (var j = 0; j < schedules.length; j++) {
@@ -113,7 +119,8 @@ class TjobScheduler extends turbine.services.TbaseService {
                     delete this.schedules[k];
                 }
             }
-        }.bind(this), function (err) {
+        }.bind(this))
+            .catch(function (err) {
             this.logger.error("scheduleAllJobs", err);
         }.bind(this));
     }
@@ -136,38 +143,13 @@ class TjobScheduler extends turbine.services.TbaseService {
             return;
         }
         var url = this.config.url.start_job.replace(/\{scheduleId\}/g, scheduleItem.schedule.id);
-        var params = {};
-        var opt = {
-            strictSSL: false,
-            json: true,
-            headers: {
-                'User-Agent': this.config.userAgent
-            }
-        };
-        if (this.config.api_key) {
-            url += "?ticket=" + this.config.api_key;
-        }
-        else if (this.config.api_username && this.config.api_password) {
-            opt.auth =
-                {
-                    user: this.config.api_username,
-                    pass: this.config.api_password,
-                    sendImmediately: true
-                };
-        }
-        request.post(url, opt, function (error, response, body) {
+        return this.request("POST", url)
+            .then(function (result) {
             var taskName = this.getTaskName(scheduleItem.schedule);
-            if (error) {
-                this.logger.error("EXECTASK '" + taskName + "': Http GET error=" + error + ", url=" + url);
-            }
-            else {
-                if (response && (response.statusCode < 400)) {
-                    this.logger.info("EXECTASK '" + taskName + "': STARTED");
-                }
-                else {
-                    this.logger.error("EXECTASK '" + taskName + "': Http GET status=" + response.statusCode + ", body=" + body + ", url=" + url);
-                }
-            }
+            this.logger.info("EXECTASK '" + taskName + "': STARTED");
+        }.bind(this))
+            .catch(function (err) {
+            this.logger.error("EXECTASK", err);
         }.bind(this));
     }
     onRefreshTimer() {
