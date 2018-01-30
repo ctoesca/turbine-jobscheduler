@@ -60,14 +60,16 @@ class TjobScheduler extends turbine.services.TbaseService {
             }
             request(opt, function (error, response, body) {
                 if (error) {
-                    reject("Http " + method + " error=" + error + ", url=" + url);
+                    var message = "Http " + method + " " + url + " error=" + error;
+                    reject(message);
                 }
                 else {
                     if (response && (response.statusCode < 400)) {
                         resolve(body);
                     }
                     else {
-                        reject("Http " + method + " status=" + response.statusCode + ", body=" + body + ", url=" + url);
+                        var message = "Http " + method + " " + url + " status=" + response.statusCode + ", body=" + body;
+                        reject(message);
                     }
                 }
             }.bind(this));
