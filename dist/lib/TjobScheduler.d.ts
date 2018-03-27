@@ -22,13 +22,13 @@ export declare class TjobScheduler extends turbine.services.TbaseService {
         "workDir": string;
     };
     flatify(): Promise<{}>;
-    request(method: any, url: any): Promise<{}>;
-    getTaskName(schedule: any): any;
-    scheduleAllJobs(): Promise<{}>;
+    private request(method, url);
+    private getTaskName(schedule);
+    private scheduleAllJobs();
     start(): void;
     stop(): void;
-    execBatch(scheduleItem: any): Promise<{}>;
-    onRefreshTimer(): void;
-    scheduleJob(scheduleItem: any): any;
-    cancelAllJobs(): void;
+    private execBatch(scheduleItem);
+    private onRefreshTimer();
+    private scheduleJob(scheduleItem);
+    private cancelAllJobs();
 }

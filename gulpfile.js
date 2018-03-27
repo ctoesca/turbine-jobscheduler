@@ -3,6 +3,7 @@
 var gulp = require("gulp"),
     tslint = require("gulp-tslint"),
     tsc = require("gulp-typescript"),
+    minify = require("gulp-minify"),
     runSequence = require("run-sequence"),
     sourcemaps = require('gulp-sourcemaps'),
     merge = require('merge2');
@@ -41,6 +42,17 @@ gulp.task("build", ["lint"], function() {
         tsResults.dts.pipe(gulp.dest('.')),
         tsResults.js.pipe(sourcemaps.write('./')).pipe(gulp.dest('./'))
     ]);
+});
+
+gulp.task("minify", function() {
+    gulp.src('dist/**/*.js')
+    .pipe(minify({
+      noSource : true,
+      ext:{
+            min:'.min.js'
+        }
+    }))
+    .pipe(gulp.dest('dist'));
 });
 
 gulp.task("watch", ["default"], function() {
