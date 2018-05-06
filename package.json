@@ -51,6 +51,6 @@
     "moment": "^2.20.1",
     "moment-timezone": "^0.5.14",
     "request-promise": "^4.2.2",
-    "turbine": "git+https://github.com/ctoesca/turbine"
+    "turbine": "git+https://github.com/ctoesca/turbine.git"
   }
 }
