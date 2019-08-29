@@ -5,8 +5,9 @@ const Promise = require("bluebird");
 const cron = require("cron");
 const request = require("request");
 class TjobScheduler extends turbine.services.TbaseService {
-    constructor(name, config) {
-        super(name, config);
+    constructor(name, application, config) {
+        super(name, application, config);
+        this.schedules = {};
         this.refreshTimer = new turbine.tools.Ttimer({ delay: this.config.refreshInterval * 1000 });
         this.refreshTimer.on(turbine.tools.Ttimer.ON_TIMER, this.onRefreshTimer, this);
     }
