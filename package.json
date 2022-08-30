@@ -49,7 +49,7 @@
     "bluebird": "^3.5.1",
     "cron": "^1.3.0",
     "moment": "^2.20.1",
-    "moment-timezone": "^0.5.14",
+    "moment-timezone": "^0.5.35",
     "request-promise": "^4.2.2",
     "turbine": "git+https://github.com/ctoesca/turbine.git"
   }
